@@ -1,0 +1,42 @@
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+
+<!--  Including the chessboardjs files:-->
+<link rel="stylesheet" href="css/chessboard-1.0.0.css">
+<link rel="stylesheet" type="text/css" href="/stylesheets/invariant.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="./js/chess.js"></script>
+<script src="./js/chessboard-1.0.0.js"></script>
+
+
+<!--  Including jQuery, another tool chessboardjs uses:-->
+
+  </head>
+  <%include ../partials/nav.ejs%>
+  <div>
+<body>
+
+  <h3 >Room: <%=room%></h3>
+  <p id='disconnect'></p>
+  <p id='Win'></p>
+  <p id='u1'></p>
+  <p id='rating1'>Rating: </p>
+  <div id="myBoard" style="width:35%"></div>
+  <p id='u2'></p>
+  <p id='rating2'>Rating: </p>
+
+  <p style="display: none;" id='room'><%=room%></p>
+  </body>
+
+  
+
+</div>
+
+
+  <!-- <button id='start'>Start Game</button> -->
+<% include ../partials/chat.ejs %>
+<script src = "socket.io/socket.io.js"></script>
+<script id='chess-script' src="./js/script.js" data-room=<%=room%> data-first= <%=first%> ></script>
+
+</html>

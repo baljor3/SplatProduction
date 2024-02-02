@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+<link rel="stylesheet" type="text/css" href="/stylesheets/invariant.css">
+<link rel="stylesheet" type="text/css" href="/stylesheets/admin_dash.css">
+<% include ../partials/header.ejs %>
+</head>
+
+<body>
+    <% include ../partials/adminNav.ejs %>
+    <!---
+    <div id="header">
+    </div>
+-->
+
+    </div>
+    <div class="actions">
+        <h1 id="title">Admin Dashboard</h1>
+        <form action="/deletePost" method="post">
+            Delete post/thread:
+            <input type="number" name="pid" placeholder="post id">
+            <input type="submit" value="Delete Post">
+        </form>
+        <form action="/deleteUser" method="post">
+            Delete User and Related Content:
+            <input type="text" name="username" placeholder="username">
+            <input type="submit" value="Delete User"> <br>
+        </form>
+        <form action="/banUser" method="post">
+            Ban User:
+            <input type="text" name="username" placeholder="username">
+            <select name="days">
+                <option value="1">1 day</option>
+                <option value="3">3 days</option>
+                <option value="7">1 week</option>
+                <option value="30">1 month</option>
+                <option value="92">3 months</option>
+                <option value="365">1 year</option>
+            </select>
+            <input type="text" maxlength="12" name="rule" placeholder="rule">
+            <input style="display:none" type="text"  name="post_id" value="-1">
+            <input style="display:none" type="text"  name="id" value="-1">
+            <input type="submit" maxlength="18" value="Ban User"> <br>
+        </form>
+
+        <h2>Change User Roles</h2>
+        <form action="/updateAdmin" method="post">
+            <input type="text" name="username" placeholder="username">
+            <input type="text" name="role" placeholder="role">
+            <input type="submit">
+        </form>
+    
+        <h2>Unresolved Reports</h2>
+        <table border = "1px solid black">
+            <tr>
+                <th>#</th>
+                <th>Post Id</th>
+                <th>Rule Violation</th>
+                <th>Accused</th>
+                <th>Accuser</th>
+                <th>View Post</th>
+                <th>Delete Post</th>
+                <th>Ban User</th>
+                <th>Delete User <br>(+ all related)</th>
+            </tr>
+        <%for(let i=0; i<reports.length; i++){%>
+            <%let threadId = -1;%>
+            <%if(reports[i].p_thread_id == -1){threadId = reports[i].p_post_id}
+            else{threadId = reports[i].p_thread_id}%>
+            <tr>
+                <td>
+                    <%=reports[i].r_report_id%>
+                    <form action="/deleteReport" method="POST">
+                        <input style="display:none" name="id" type="text" value="<%=reports[i].r_report_id%>">
+                        <input type="submit" value="X">
+                    </form>
+                </td>
+                <td><%=reports[i].r_post_id%></td>
+                <td><%=reports[i].r_rule%></td>
+                <td><%=reports[i].p_username%></td>
+                <td><%=reports[i].r_username%></td>
+                <td><button onclick="window.open('/thread/<%=threadId%>#p<%=reports[i].p_post_id%>', '' ,'width=800px, height=800px, left=200px, top=200px')"><%=threadId%>#<%=reports[i].p_post_id%></button></td>
+                <td>
+                    <form action="/deletePost" method="post">
+                        <input style="display:none" value="<%=reports[i].p_post_id%>" type="number" name="pid">
+                        <input type="submit" value="Delete Post">
+                    </form>
+                </td>
+
+                <td>
+                    <form action="/banUser" method="post">
+                        <input style="display:none" name="id" type="text" value="<%=reports[i].r_report_id%>">
+                        <input style="display:none" name="post_id" type="text" value="<%=reports[i].p_post_id%>">
+                        <input style="display:none" type="text" name="username" value="<%=reports[i].p_username%>">
+                        <select name="days">
+                            <option value="1">1 day</option>
+                            <option value="3">3 days</option>
+                            <option value="7">1 week</option>
+                            <option value="30">1 month</option>
+                            <option value="92">3 months</option>
+                            <option value="365">1 year</option>
+                        </select>
+                        <input style="display:none" type="text" name="rule" value="<%=reports[i].r_rule%>">
+                        <input type="submit" maxlength="18" value="Ban User"> <br>
+                    </form>
+                </td>
+
+                <td>
+                    <form action="/deleteUser" method="post">
+                        <input style="display:none" value="<%=reports[i].p_username%>" type="text" name="username" placeholder="username">
+                        <input type="submit" value="Nuke User">
+                    </form>
+                </td>
+            </tr>
+        <%}%>
+        </table>
+    </div>
+    <a href='/users'><h2>View all Users</h2></a>
+    <a href='/admin/bans'><h2>View all Bans</h2></a>
+
+</body>
+
+
+<!-- fix this -->
+<script type="text/javascript">
+    var results = <%= results%>;
+    if(results == 0) {alert("Id not found")};
+    if(results > 0) {alert("Success!")};
+    if(results == -2) {alert("Invalid input")}
+</script>
+
+</html>

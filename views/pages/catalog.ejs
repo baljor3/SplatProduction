@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Splat - Catalog</title>
+<link rel="stylesheet" type="text/css" href="/stylesheets/invariant.css">
+<link rel="stylesheet" type="text/css" href="/stylesheets/forum.css">
+<% include ../partials/header.ejs %>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+
+<body>
+	<% if(session.role == ('a' || 'm')) { %>
+    <% include ../partials/adminNav.ejs %>
+  <% } else { %>
+    <%include ../partials/nav.ejs%>
+  <%} %>
+<div id="mainContainer">
+	<div id="header">
+		<img src="/splat.png"></img>
+		<hr>
+		<form class="col-sm-4" action="/create_forum" method="POST">
+			<div class="forumForm">
+			<table id="forumTable1">
+				<tr>
+					<td>Create Forum‎‏‏‎</td>
+					<td><input class="textBoxes" type="text" name="forumName" required><br></td>
+				</tr>
+				<tr>
+					<td>Password‎‎‎‎‏‏‎ (optional)</td>
+					<td><input class="textBoxes" type="password" name="forumPassword"><br></td>
+				</tr>
+				<tr>
+					<td><input class="forumButtons" type="submit" name="forumSubmit" value="Create Forum"></td>
+				</tr>
+			</table>
+		  </div>
+	  </form>
+		<form class="col-sm-4" action="/access_forum" method="POST">
+			<div class="accessForm">
+			<table id="forumTable2">
+		      <tr>
+		      	<td>Access Forum‎‏‏‎</td>
+						<td><input class="textBoxes" type="text" name="forumName" required><br></td>
+		      </tr>
+					<tr>
+						<td>Password (optional)‏‏‎</td>
+						<td><input class="textBoxes" type="password" name="forumPassword"><br></td>
+					</tr>
+					<tr>
+						<td><input class="forumButtons" type="submit" name="accessSubmit" value="Access Forum"></td>
+					</tr>
+			</table>
+		  </div>
+	  </form>
+		<br>
+		<br>
+		<br>
+		<hr>
+		[<a id="newThreadBtn">Start a New Thread</a>]
+		<div id="newThreadSection" style="display:none">
+			<form id="postForm" action="/add-thread" method="post">
+				<table id="postTable">
+					<tr>
+					<%if(username != ""){%>
+						<td>Username</td>
+						<td><b><%=username%></b></td>
+					<%} else{%>
+						<td><a href="/">Login to post</a></td>
+					<%}%>
+					</tr>
+					<tr>
+						<td>Subject</td>
+						<td><input class="textBoxes" name="tSubject" maxlength="120" type="text"></input></td>
+					</tr>
+					<tr>
+						<td>Forum</td>
+						<!--<td><input class="textBoxes" name="tForum" maxlength="18" type="text"></input></td>-->
+						<td><select class="textBoxes" name="tForum">
+							<%forums.forEach(function(f) {%>
+								<option value="<%=f%>"><%=f%></option>
+							<%});%>
+						</select>
+					</tr>
+					<tr>
+						<td>Comment</td><td><textarea class="textBoxes" name="pText" maxlength="1500" rows="6" cols="32"></textarea></td>
+					</tr>
+					<tr>
+						<td>Verification</td>
+						<%//actual testing data-sitekey: 6LekFLEZAAAAALJ7jQOKGmsHaKJqDbFEARsaMQV6
+						//local data-sitekey: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI%>
+						<td><div class="g-recaptcha" data-theme="light" data-sitekey="6LekFLEZAAAAALJ7jQOKGmsHaKJqDbFEARsaMQV6"></div><td>
+					</tr>
+					<tr>
+						<td><input class="forumButtons" value="Post" type="submit"></input></td>
+					</tr>
+					<!--
+					<tr><td>File</td><td><input type="file" id="file"></td><td>[<input type="checkbox" name="spoiler">Spoiler?]</td></tr>
+					-->
+				</table>
+			</form>
+		</div>
+		<table id="updates">
+		<hr>
+		</table>
+		<!--
+		<span>
+			[<a>Hide</a>]
+			[<a>Show All</a>]
+		</span>-->
+		<hr>
+		<div id="top" class="selectBar">
+			[<a href="javascript:history.back()">Return</a>]
+			[<a href="#bottom">Bottom</a>]
+			[<a href="javascript:location.reload()">Refresh</a>]
+			<!--
+			<span class = "spacer"></span>
+			Sort By:
+				<select id="sortOrder">
+					<option value="replyCount">Reply Count</option>
+					<option value="bumpOrder">Bump Order</option>
+					<option value="creationDate">Creation Date</option>
+				</select>
+			Image Size:
+				<select id="imageSize">
+					<option value="small">Small</option>
+					<option value="large">Large</option>
+				</select>
+			[<a>Filters</a>]
+			<input type="text" placeholder="Search..."></input>
+		-->
+		</div>
+	</div>
+	<hr>
+	<div id="catalogContainer">
+	<%rows.forEach((r) => {%>
+		<a href="/thread/<%=r.p_post_id%>">
+			<div class="threadPreview">
+				<b><span class="subject"><%=r.t_subject%></span></b>:
+				<%=r.p_text%>
+				<span style="float:right">
+					by: <b><span class="username"><%=r.p_username%></span></b>
+					in: <b><span class="forum"><%=r.t_forum%></span></b>
+					<b>R:</b><%=r.t_post_num%>
+					<!--<b>U:</b><%=//r.t_user_num%>-->
+				</span>
+			</div>
+		</a>
+	<%});%>
+	</div>
+
+	<div id="bottom" class="selectBar">
+		<hr>
+		[<a href="javascript:history.back()">Return</a>]
+		[<a href="#top">Top</a>]
+		[<a href="javascript:location.reload()">Refresh</a>]
+	</div>
+	<hr>
+	<!--Style:
+		<select id="style">
+		</select>-->
+	<br>
+	<span>All trademarks and copyrights on this page are owned by their respective parties. Images uploaded are the responsibility of the Poster. Comments are owned by the Poster.</span>
+	<br>
+	<!--<a href="/about">About</a> -
+	<a href="/contact">Contact</a>-->
+</div>
+</body>
+<% include ../partials/chat.ejs %>
+
+<script>
+$("#newThreadBtn").click(()=>{
+	if($("#newThreadSection").css('display') == 'none')
+		$("#newThreadSection").css('display', 'block');
+	else
+		$("#newThreadSection").css('display', 'none');
+	console.log("cool");
+});
+</script>
+</html>

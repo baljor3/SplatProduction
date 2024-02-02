@@ -1,0 +1,78 @@
+.opPost{
+	border: 0px;
+	padding-left: 20px;
+	padding-bottom: 20px;
+}
+.postBox{
+	display: flex;
+	flex-direction: row;
+	margin: 4px;
+}
+.post{
+	background-color:#CECECE;
+	padding: 6px;
+	margin-left: 6px;
+}
+.postText{
+	display: block;
+	margin: 6px 0px 6px 24px;
+	white-space: pre-wrap;
+}
+.selectBar{
+	user-select: none; /* Standard */
+	cursor: default;
+}
+#newPostSection{
+	position: fixed;
+	border: 2px solid black;
+	display: none;
+	background-color: #CECECE;
+	top: 50%;
+   left: 50%;
+	padding: 4px;
+	user-select: none;
+	z-index: 40;
+}
+#newPostSectionHeader{
+	text-align: center;
+	font-weight: bold;
+	cursor: move;
+}
+#userTextarea{
+	width: 300px;
+	height: 90px;
+	overflow-y: auto;
+}
+.postMenuContainer{
+	position: relative;
+	display: inline-block;
+}
+.postMenuBtn{
+	cursor: pointer;
+}
+.postMenu{
+	display: none;
+	position: absolute;
+	background-color: white;
+	width: 90px;
+	z-index: 20;
+}
+.postMenuLink{
+	cursor: pointer;
+	padding: 2px;
+	display: block;
+	text-decoration: none;
+}
+.replyPreview{
+	display:none;
+}
+
+.forumButtons {
+	margin: 2px;
+	background-color: #D3D3D3;
+  border: 1px solid black;
+	text-align: center;
+	color: black;
+	font-size: 16px;
+	border-radius: 6px;
+}

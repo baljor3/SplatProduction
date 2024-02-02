@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Splat- Home page</title>
+  <link rel="stylesheet" type="text/css" href="/stylesheets/invariant.css">
+  <link rel="stylesheet" type="text/css" href="stylesheets/forum.css">
+  <% include ../partials/header.ejs %>
+</head>
+
+<body>
+  <% if(session.role == ('a' || 'm')) { %>
+    <% include ../partials/adminNav.ejs %>
+  <% } else { %>
+    <%include ../partials/nav.ejs%>
+  <%} %>
+
+  <div class="post-container">
+
+</div>
+
+<div class="post-container">
+  <div class ='post'>Recent posts:</div>
+  <%rows.forEach((r) => {%>
+		<a href="/thread/<%=r.p_post_id%>">
+			<div class="threadPreview">
+				<b><%=r.t_subject%></b>:
+				<%=r.p_text%>
+				<span style="float:right">
+					by: <b><span class="username"><%=r.p_username%></span></b>
+          in: <b><span class="forum"><%=r.t_forum%></span></b>
+					<b>R:</b><%=r.t_post_num%>
+					<!--<b>U:</b><%=r.t_user_num%>-->
+				</span>
+			</div>
+		</a>
+	<%});%>
+  </div>
+
+
+</body>
+<% include ../partials/chat.ejs %>
+</html>
