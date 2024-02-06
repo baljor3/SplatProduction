@@ -18,11 +18,12 @@ var settings = {
 };
 var ranking = new glicko.Glicko2( settings );
 const db = new Pool( {
-	//user: process.env.username,
-	//host: process.env.host,
-	//database:process.env.database,
-	//password: process.env.password,
-	//port: process.env.port
+	/*user: "",
+	host: "",
+	database:"",
+	password: "",
+	port: ""
+	*/
   connectionString: process.env.DATABASE_URL
 
 } );
