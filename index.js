@@ -1,10 +1,10 @@
 const express = require( "express" ),
-	http = require( "http" );
+http = require( "http" );
 const path = require( "path" );
 const ses = require( "express-session" );
 
 var cors= require('cors')
-// const http=require('http').Server(express);
+//const http=require('http').Server(express);
 const { Chess } = require( "./public/js/chess.js" );
 const PORT = process.env.PORT || 1200;
 const { Pool } = require( "pg" );
@@ -18,14 +18,15 @@ var settings = {
 };
 var ranking = new glicko.Glicko2( settings );
 const db = new Pool( {
-	user: 'postgres',
-	host: 'localhost',
-	database: 'splat',
-	password: '159159',
-	port: 5000
-  //connectionString: process.env.DATABASE_URL||"postgres://postgres:root@localhost"
+	//user: process.env.username,
+	//host: process.env.host,
+	//database:process.env.database,
+	//password: process.env.password,
+	//port: process.env.port
+  connectionString: process.env.DATABASE_URL
 
 } );
+
 const fetch = require( "node-fetch" );
 
 var bodyParser = require( "body-parser" );
@@ -188,7 +189,90 @@ app.all( "/admin", ( req, res ) => {
 		return res.redirect( "login" );
 	}
 } );
+app.post("/createTables",(req,res)=>{
+	let sql = `CREATE TABLE Users(
+		username VARCHAR(18) PRIMARY KEY,
+		email VARCHAR,
+		chess_elo INT ,
+		checkers_elo INT ,
+		password VARCHAR(30) NOT NULL,
+		role CHAR DEFAULT 'u',
+		date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	
+		accessible text[] DEFAULT '{main}'::text[],
+	
+		rd numeric,
+		vol numeric,
+		following text[] DEFAULT '{}'::text[],
+		blocked text[] DEFAULT '{}'::text[],
+		resettoken bigint,
+	
+		wins INTEGER default 0,
+		losses INTEGER default 0,
+		ties INTEGER default 0,
+	
+		-- twitter user auth tokens
+		oauth_token VARCHAR(80),
+		oauth_token_secret VARCHAR(80)
+	);
 
+	CREATE TABLE Forums(
+		f_name VARCHAR(18) PRIMARY KEY,
+		f_password VARCHAR(30) NOT NULL,
+		f_owner VARCHAR(18)
+	);
+
+	CREATE TABLE Posts(
+		-- post data
+		p_post_id SERIAL PRIMARY KEY,
+		p_username VARCHAR(18) REFERENCES Users(username),
+		p_text VARCHAR(1500),
+		p_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		p_thread_id INT DEFAULT -1, -- -1 indicates its a thread
+		p_country_code CHAR(2) DEFAULT 'AX',
+		p_banned_for BOOLEAN DEFAULT 'f',
+	
+		-- thread data
+		t_subject VARCHAR(120),
+		t_forum VARCHAR(18) DEFAULT 'main',
+		t_pinned BOOLEAN DEFAULT 'f',
+		t_bump_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		t_post_num INT DEFAULT 1
+	);
+	
+	CREATE TABLE Reports(
+		r_report_id SERIAL PRIMARY KEY,
+		r_rule VARCHAR(18),
+		r_post_id INT,
+		r_username VARCHAR(18)
+	);
+	
+	-- table for holding replies relationship between posts
+	CREATE TABLE Replies(
+		parent_id SERIAL REFERENCES posts(p_post_id),
+		reply_id SERIAL REFERENCES posts(p_post_id)
+	);
+
+	CREATE TABLE Bans(
+		b_id SERIAL PRIMARY KEY,
+		b_username VARCHAR(18),
+		b_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		b_end TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		b_rule VARCHAR(18),
+		b_post_id INT
+	);
+	
+	`
+db.query(sql,(err,result)=>{
+
+	if(err){
+		return res.send(err)
+	}else{
+		return res.send("tables has been added")
+	}
+})
+
+})
 app.get( "/chat",( req,res )=>{
 	if( req.session.loggedin ){
 		res.render( "/userView" );}
@@ -641,6 +725,7 @@ app.post( "/back-forum", ( req,res )=>{
 //If email is not provided I just put an empty string into database. Set the chess elo default to 1000.
 app.post( "/registerForm", ( req, res ) => {
 	db.query( `SELECT username from users WHERE username = '${req.body.username}'`, ( err, result ) => {
+		console.log(result)
 		if ( result.rows.length > 0 ) {
 			return res.render( "pages/usernameTaken" );
 		} else {
