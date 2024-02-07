@@ -18,13 +18,14 @@ var settings = {
 };
 var ranking = new glicko.Glicko2( settings );
 const db = new Pool( {
-	user: "postgres",
-	host: "localhost",
-	database:"splat",
-	password: "159159",
-	port: "5000"
-	
-  //connectionString: process.env.DATABASE_URL
+	/*
+	user: "",
+	host: "",
+	database:"",
+	password: "",
+	port: ""
+	*/
+  connectionString: process.env.DATABASE_URL
 
 } );
 
