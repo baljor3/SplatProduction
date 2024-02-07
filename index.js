@@ -18,13 +18,13 @@ var settings = {
 };
 var ranking = new glicko.Glicko2( settings );
 const db = new Pool( {
-	/*user: "",
-	host: "",
-	database:"",
-	password: "",
-	port: ""
-	*/
-  connectionString: process.env.DATABASE_URL
+	user: "postgres",
+	host: "localhost",
+	database:"splat",
+	password: "159159",
+	port: "5000"
+	
+  //connectionString: process.env.DATABASE_URL
 
 } );
 
@@ -372,6 +372,10 @@ app.get( "/user_add", ( req,res )=>{
 } );
 
 app.post( "/add_user", ( req,res )=>{
+	if( !req.body["g-recaptcha-response"] ){
+		res.send( "captcha not filled, placeholder response, ajax resposne coming" );
+		return;
+	}
 	var searchVal=req.body.searchVal;
 	query=`select username from users where username='${searchVal}'`;
 	db.query( query, ( err,result ) => {
@@ -600,7 +604,12 @@ app.get( "/report-post/:id", ( req, res )=>{
 } );
 
 app.post( "/send-report", bodyParser.urlencoded( { extended:false } ), ( req, res )=>{
+	
 	if( req.session.loggedin==false ){ res.render( "pages/noAccess.ejs" ); return; }
+	if( !req.body["g-recaptcha-response"] ){
+		res.send( "captcha not filled, placeholder response, ajax resposne coming" );
+		return;
+	}
 	let data = {};
 	data["pPostId"] = req.body.rPostId;
 	let rRule = req.body.rRule;
@@ -647,6 +656,11 @@ app.post( "/add-post/", bodyParser.urlencoded( { extended:false } ), ( req, res 
 	}
 
 	if( req.session.loggedin==false ){ res.render( "pages/noAccess.ejs" ); return; }
+
+	if( !req.body["g-recaptcha-response"] ){
+		res.send( "captcha not filled, placeholder response, ajax resposne coming" );
+		return;
+	}
 
 	let pThreadId = req.body.pThreadId;
 	let pUsername = req.session.username;
