@@ -514,10 +514,6 @@ app.get( "/rules", ( req,res )=>{
 } );
 
 app.post( "/add-thread", bodyParser.urlencoded( { extended:false } ), ( req, res )=>{
-	if( !req.body["g-recaptcha-response"] ){
-		res.send( "captcha not filled, placeholder response, ajax resposne coming" );
-		return;
-	}
 	if( req.session.loggedin==false ){ res.render( "pages/noAccess.ejs" ); return; }
 	let data = {};
 	// first, fetch the values needed for the thread table
@@ -605,10 +601,6 @@ app.get( "/report-post/:id", ( req, res )=>{
 
 app.post( "/send-report", bodyParser.urlencoded( { extended:false } ), ( req, res )=>{
 	if( req.session.loggedin==false ){ res.render( "pages/noAccess.ejs" ); return; }
-	if( !req.body["g-recaptcha-response"] ){
-		res.send( "captcha not filled, placeholder response, ajax resposne coming" );
-		return;
-	}
 	let data = {};
 	data["pPostId"] = req.body.rPostId;
 	let rRule = req.body.rRule;
@@ -656,10 +648,6 @@ app.post( "/add-post/", bodyParser.urlencoded( { extended:false } ), ( req, res 
 
 	if( req.session.loggedin==false ){ res.render( "pages/noAccess.ejs" ); return; }
 
-	if( !req.body["g-recaptcha-response"] ){
-		res.send( "captcha not filled, placeholder response, ajax resposne coming" );
-		return;
-	}
 	let pThreadId = req.body.pThreadId;
 	let pUsername = req.session.username;
 	let pText = req.body.pText;
