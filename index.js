@@ -501,10 +501,6 @@ app.get( "/user_add", ( req,res )=>{
 } );
 
 app.post( "/add_user", ( req,res )=>{
-	if( !req.body["g-recaptcha-response"] ){
-		res.send( "captcha not filled, placeholder response, ajax resposne coming" );
-		return;
-	}
 	var searchVal=req.body.searchVal;
 	query=`select username from users where username='${searchVal}'`;
 	db.query( query, ( err,result ) => {
